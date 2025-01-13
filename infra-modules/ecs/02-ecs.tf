@@ -1,6 +1,6 @@
 # Create an ECS cluster
 resource "aws_ecs_cluster" "this" {
-  name = "{var.env}-ecs-cluster"
+  name = "${var.env}-ecs-cluster"
 }
 
 resource "aws_ecs_capacity_provider" "this" {
