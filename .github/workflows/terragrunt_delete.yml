@@ -1,46 +1,59 @@
-name: ecr-delete
+name: "terragrunt-destroy"
 
 on:
-  workflow_dispatch: # Allows manual triggering of this workflow
-
-env:
-  AWS_REGION: ca-central-1
-
+  push:
+    branches:
+      - main
 jobs:
-  terragrunt-delete:
-    name: terragrunt-delete
+  terragrunt-destroy-all:
     runs-on: ubuntu-latest
-
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_REGION: ca-central-1
     steps:
-      # Step 1: Checkout the repository
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v2
 
-      # Step 2: Configure AWS credentials using OIDC
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1.2.1
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ca-central-1
+          terraform_version: latest
+          terraform_wrapper: false
 
-      # Step 3: Verify identity (optional for debugging)
-      - name: Sts GetCallerIdentity
+      - name: Setup Terragrunt
         run: |
-          aws sts get-caller-identity
+          #!/usr/bin/env bash
+          set -euo pipefail
+      
+          OS="linux"
+          ARCH="amd64"
+          VERSION="v0.69.10"
+          BINARY_NAME="terragrunt_${OS}_${ARCH}"
+      
+          # Download the binary
+          curl -sL "https://github.com/gruntwork-io/terragrunt/releases/download/$VERSION/$BINARY_NAME" -o "$BINARY_NAME"
+      
+          # Generate the checksum
+          CHECKSUM="$(sha256sum "$BINARY_NAME" | awk '{print $1}')"
+      
+          # Download the checksum file
+          curl -sL "https://github.com/gruntwork-io/terragrunt/releases/download/$VERSION/SHA256SUMS" -o SHA256SUMS
+      
+          # Grab the expected checksum
+          EXPECTED_CHECKSUM="$(grep "$BINARY_NAME" SHA256SUMS | awk '{print $1}')"
+      
+          # Compare the checksums
+          if [ "$CHECKSUM" == "$EXPECTED_CHECKSUM" ]; then
+            echo "Checksums match!"
+            chmod +x "$BINARY_NAME"
+            sudo mv "$BINARY_NAME" /usr/local/bin/terragrunt
+          else
+            echo "Checksums do not match!"
+            exit 1
+          fi
 
-      # Step 4: Terragrunt Plan (recommended before deletion to check impacted resources)
-      - name: 'Terragrunt Plan Destroy'
-        uses: the-commons-project/terragrunt-github-actions@master
-        with:
-          tf_actions_subcommand: 'plan'
-          tf_actions_working_dir: '.'
-          args: '--terragrunt-non-interactive -destroy'
 
-      # Step 5: Terragrunt Destroy
-      - name: 'Terragrunt Destroy'
-        uses: the-commons-project/terragrunt-github-actions@master
-        with:
-          tf_actions_subcommand: 'destroy'
-          tf_actions_working_dir: '.'
-          args: '--terragrunt-non-interactive --force'
+      - name: Apply All
+        run: |
+          terragrunt run-all destroy --terragrunt-non-interactive
