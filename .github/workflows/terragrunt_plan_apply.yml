@@ -32,17 +32,17 @@ jobs:
         aws-region: ca-central-1  # or your region
 
     - name: Initialize Terragrunt
-      run: terragrunt run-all init
+      run: terragrunt run-all init --terragrunt-non-interactive
       working-directory: workdir/terragrunt-ecs
 
     - name: Validate Terragrunt
-      run: terragrunt run-all validate
+      run: terragrunt run-all validate --terragrunt-non-interactive
       working-directory: workdir/terragrunt-ecs
 
     - name: Plan Terragrunt
       id: plan
       run: |
-        terragrunt run-all plan
+        terragrunt run-all plan --terragrunt-non-interactive
       working-directory: workdir/terragrunt-ecs
 
     - name: Apply Terragrunt
