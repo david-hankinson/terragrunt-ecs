@@ -1,0 +1,39 @@
+# Local terraform/terragrunt directories and files
+.terragrunt-cache/
+.terraform/
+.terraform.lock.hcl
+
+# Terraform plan files
+*.tfplan
+*.tfstate
+*.tfstate.backup
+
+# Terragrunt log files
+terragrunt-debug.log
+
+# Sensitive/temporary files
+*.tfvars
+*.tfvars.json
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# IDE and editor specific files
+*.swp
+*.swo
+.idea/
+*.iml
+.vscode/
+.vscode-oss/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Miscellaneous
+*.log
+node_modules/
+.env
+*.bak
+.venv

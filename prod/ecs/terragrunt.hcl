@@ -1,0 +1,78 @@
+terraform {
+  source = "../../infra-modules/ecs/"
+}
+
+include "root" {
+  path = find_in_parent_folders("root.hcl")
+}
+
+include "env" {
+  path           = find_in_parent_folders("env.hcl")
+  expose         = true
+  merge_strategy = "no_merge"
+}
+
+dependency "network" {
+  config_path = "../network/"
+
+  mock_outputs = {
+    public_subnets_ids = ["id_one", "id_two"]
+    private_subnets_ids = ["id_one", "id_two"]
+    security_group_ids = ["id_one","id_two"]
+    load_balancer_id = "lb"
+    lb_target_group_id = "lb_tg"
+    env = "prod"
+    vpc_id = "mock_vpc_id"
+    vpc_cidr_block = "10.0.0.0/16"
+    vpc_zone_identifier = "aaaaaaa"
+    load_balancer_id = "mock_lb"
+    aws_ecs_service_load_balancer_tg_arn = "arn:aws:elasticloadbalancing:ca-central-1:000000000000:targetgroup/prod-tg/0000000000000000"
+    domain_name = "aaaaa"
+    internet_gw_id = "aaaaa"
+    vpc_security_group_ids = "aaaaaaa"
+  }
+}
+
+inputs = {
+  ## env inputs
+  env                      = include.env.locals.env
+  region                   = include.env.locals.region
+
+  # Domain Configuration
+  domain_name              = "bankreporting-app-example.com"  # Default domain name for the app
+
+  ## ec2 inputs
+  launch_template_name_prefix = "rails-bank-trx-reporting-prod-asg"
+  ec2_image_id = "ami-003c73db869b0c14b" # bottlerocket image
+  ec2_instance_type = "t3.large"
+  vpc_zone_identifier = flatten([dependency.network.outputs.public_subnets_ids, dependency.network.outputs.private_subnets_ids])
+
+  ## ecs inputs
+  aws_ecs_cluster_name = "rails-bank-trx-reporting"
+  aws_ecs_capacity_provider_name = "rails-bank-trx-reporting-capacity-provider"
+  aws_ecs_task_definition_family = "rails-bank-trx-reporting-td-family"
+  ecs_minimum_scaling_step_size = 1
+  ecs_maximum_scaling_step_size = 2
+  ecs_target_capacity_percentage = 80
+  vpc_id = dependency.network.outputs.vpc_id
+  vpc_security_group_ids = dependency.network.outputs.vpc_sg
+  public_subnets_ids = dependency.network.outputs.public_subnets_ids
+  private_subnets_ids = dependency.network.outputs.private_subnets_ids
+  vpc_cidr_block = dependency.network.outputs.vpc_cidr_block
+  internet_gw_id = dependency.network.outputs.internet_gw_id
+}
+
+remote_state {
+  backend = "s3"
+  generate = {
+    path      = "rails-bank-trx-reporting-deploy-state.tf"
+    if_exists = "overwrite_terragrunt"
+  }
+
+  config = {
+    bucket  = "prod-rails-bank-trx-reporting-deploy"
+    key     = "ecs.prod.terraform.tfstate"
+    region  = "ca-central-1"
+    encrypt = true
+  }
+}
