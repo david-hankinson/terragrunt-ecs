@@ -15,12 +15,12 @@ jobs:
     - name: Setup Terragrunt
       uses: userbradley/actions-install-terragrunt@v1.0.0
       with:
-        terragrunt-version: 'v0.47.0'  # Specify the version you need
+        terragrunt-version: latest  # Specify the version you need
 
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v2
       with:
-        terraform_version: '1.4.4'  # Specify the Terraform version you need
+        terraform_version: latest  # Specify the Terraform version you need
 
     - name: Authenticate to AWS
       uses: aws-actions/configure-aws-credentials@v1
