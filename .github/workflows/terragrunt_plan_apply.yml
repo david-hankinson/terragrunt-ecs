@@ -54,7 +54,6 @@ jobs:
           fi
 
 
-      - name: Apply All production
+      - name: Apply All
         run: |
-          cd env/production
           terragrunt run-all apply --terragrunt-non-interactive
