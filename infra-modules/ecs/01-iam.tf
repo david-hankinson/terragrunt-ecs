@@ -32,15 +32,14 @@ resource "aws_iam_instance_profile" "ecs_node" {
 }
 
 # --- ECS Task Role ---
-
 data "aws_iam_policy_document" "ecs_task_doc" {
 
   statement {
     actions = ["sts:AssumeRole"]
-    effect = "Allow"
+    effect  = "Allow"
 
     principals {
-      type = "Service"
+      type        = "Service"
       identifiers = ["ecs-tasks.amazonaws.com", "ec2.amazonaws.com"]
     }
   }

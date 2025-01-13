@@ -1,6 +1,6 @@
 resource "aws_security_group" "this" {
   name_prefix = "${var.env}-vpc-sg"
-  vpc_id = aws_vpc.this.id
+  vpc_id      = aws_vpc.this.id
 
   ingress {
     from_port   = 0

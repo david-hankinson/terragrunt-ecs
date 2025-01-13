@@ -36,12 +36,12 @@ inputs = {
 remote_state {
   backend = "s3"
   generate = {
-    path      = "rails-bank-trx-reporting-deploy-state.tf"
+    path      = "prod-network-state.tf"
     if_exists = "overwrite_terragrunt"
   }
 
   config = {
-    bucket  = "prod-rails-bank-trx-reporting-deploy"
+    bucket  = "prod-network-state"
     key     = "network.prod.terraform.tfstate"
     region  = "ca-central-1"
     encrypt = true

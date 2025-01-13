@@ -1,20 +1,20 @@
 variable "env" {
   description = "Which environment the infrastructure will be deployed in"
-  type = string
+  type        = string
 }
 
 variable "vpc_id" {
-  type = string
+  type        = string
   description = "vpc id"
 }
 
 variable "public_subnets_ids" {
-  type = list(string)
+  type        = list(string)
   description = "public subnet ids"
 }
 
 variable "private_subnets_ids" {
-  type = list(string)
+  type        = list(string)
   description = "private subnet ids"
 }
 
@@ -24,26 +24,21 @@ variable "ec2_instance_type" {
 }
 
 variable "vpc_zone_identifier" {
-  type = list(string)
+  type        = list(string)
   description = "vpc zone identifiers"
 }
 
 variable "vpc_security_group_ids" {
-  type = string
+  type        = string
   description = "vpc security group ids"
 }
 
-variable "domain_name" {
-  type = string
-  description = "domain name"
-}
-
 variable "internet_gw_id" {
-  type = string
+  type        = string
   description = "internet gw id"
 }
 
 variable "vpc_cidr_block" {
-  type = string
+  type        = string
   description = "vpc cidr blocks"
 }

@@ -21,7 +21,7 @@ dependency "network" {
     security_group_ids = ["id_one","id_two"]
     load_balancer_id = "lb"
     lb_target_group_id = "lb_tg"
-    env = "prod"
+    env = "non-prod"
     vpc_id = "mock_vpc_id"
     vpc_cidr_block = "10.0.0.0/16"
     vpc_zone_identifier = "aaaaaaa"
@@ -37,14 +37,15 @@ inputs = {
   env                      = include.env.locals.env
   region                   = include.env.locals.region
 
+
   ## ec2 inputs
-  ec2_instance_type = "t3.medium"
+  ec2_instance_type = "t3.small"
   vpc_zone_identifier = flatten([dependency.network.outputs.public_subnets_ids, dependency.network.outputs.private_subnets_ids])
 
   ## ecs inputs
-  aws_ecs_cluster_name = "prod-ecs-cluster"
-  aws_ecs_capacity_provider_name = "prod-capacity-provider"
-  aws_ecs_task_definition_family = "prod-td-family"
+  aws_ecs_cluster_name = "non-prod-ecs-cluster"
+  aws_ecs_capacity_provider_name = "non-prod-capacity-provider"
+  aws_ecs_task_definition_family = "non-prod-td-family"
   ecs_minimum_scaling_step_size = 1
   ecs_maximum_scaling_step_size = 2
   ecs_target_capacity_percentage = 80
@@ -59,13 +60,13 @@ inputs = {
 remote_state {
   backend = "s3"
   generate = {
-    path      = "prod-ecs-state.tf"
+    path      = "non-prod-state.tf"
     if_exists = "overwrite_terragrunt"
   }
 
   config = {
-    bucket  = "prod-ecs-state"
-    key     = "ecs.prod.terraform.tfstate"
+    bucket  = "non-prod-ecs-state"
+    key     = "ecs.non-prod.terraform.tfstate"
     region  = "ca-central-1"
     encrypt = true
   }

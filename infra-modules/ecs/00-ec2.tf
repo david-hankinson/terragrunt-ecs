@@ -3,7 +3,7 @@ data "aws_ssm_parameter" "this" {
 }
 
 resource "aws_launch_template" "this" {
-  name_prefix            = "demo-ecs-ec2-"
+  name_prefix            = "${var.env}-ecs-cluster-node-lt-"
   image_id               = data.aws_ssm_parameter.this.value
   instance_type          = var.ec2_instance_type
   vpc_security_group_ids = [aws_security_group.this.id]
@@ -19,16 +19,6 @@ resource "aws_launch_template" "this" {
       systemctl enable amazon-ssm-agent
       systemctl start amazon-ssm-agent
 
-      # Create directories for ECS task volumes
-      mkdir -p /mnt/ecs/react
-      mkdir -p /mnt/ecs/rails
-      mkdir -p /mnt/ecs/postgres/data
-      mkdir -p /mnt/ecs/postgres/init
-      mkdir -p /mnt/ecs/redis/data
-
-      # Set appropriate permissions
-      chmod -R 755 /mnt/ecs
-
     EOF
   )
 }
@@ -37,7 +27,7 @@ resource "aws_autoscaling_group" "this" {
   name_prefix               = "${var.env}-ecs-asg"
   vpc_zone_identifier       = var.public_subnets_ids
   min_size                  = 2
-  max_size                  = 5
+  max_size                  = 3
   health_check_grace_period = 0
   health_check_type         = "EC2"
   protect_from_scale_in     = false
