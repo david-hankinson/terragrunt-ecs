@@ -1,0 +1,54 @@
+name: Tag Release
+
+on:
+  workflow_run:
+    workflows: ["ecr-build-deploy"] # Assuming your build pipeline is named "Build Pipeline"
+    types:
+      - completed
+
+jobs:
+  tag:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }} # Only run if the build pipeline succeeded
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
+    - name: Get latest tag
+      id: get_latest_tag
+      run: |
+        git fetch --tags
+        echo "::set-output name=latest_tag::$(git describe --tags --abbrev=0 --match='v*.*.*' || echo 'v0.0.0')"
+
+    - name: Increment version
+      id: increment_version
+      run: |
+        VERSION=$(echo ${{ steps.get_latest_tag.outputs.latest_tag }} | sed 's/^v//')
+        MAJOR=$(echo $VERSION | cut -d. -f1)
+        MINOR=$(echo $VERSION | cut -d. -f2)
+        PATCH=$(echo $VERSION | cut -d. -f3)
+        
+        # Increment the MINOR version since this is a successful build, not a patch or major release
+        NEW_MINOR=$((MINOR + 1))
+        
+        NEW_VERSION="v$MAJOR.$NEW_MINOR.0"
+        echo "::set-output name=new_version::$NEW_VERSION"
+
+    - name: Create new tag
+      uses: actions/github-script@v6
+      with:
+        github-token: ${{secrets.GITHUB_TOKEN}}
+        script: |
+          github.rest.git.createRef({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            ref: 'refs/tags/${{ steps.increment_version.outputs.new_version }}',
+            sha: context.sha
+          })
+
+    - name: Push new tag
+      run: |
+        git tag ${{ steps.increment_version.outputs.new_version }}
+        git push origin ${{ steps.increment_version.outputs.new_version }}
