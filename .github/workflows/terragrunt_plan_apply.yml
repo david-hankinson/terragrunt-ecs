@@ -1,50 +1,36 @@
-name: ecr-build-deploy
+name: "terragrunt-apply"
 
 on:
   push:
     branches:
-      - main  # Or whatever branch you want this to trigger on
+      - main
+
 
 jobs:
-  deploy:
+  terragrunt-apply-all:
     runs-on: ubuntu-latest
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_REGION: ca-central-1
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-      with:
-        path: workdir/terragrunt-ecs
+      - name: Checkout
+        uses: actions/checkout@v2
 
-    - name: Setup Terragrunt
-      uses: userbradley/actions-install-terragrunt@v1.0.0
-      with:
-        terragrunt-version: latest  # Specify the version you need
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1.2.1
+        with:
+          terraform_version: latest
+          terraform_wrapper: false
 
-    - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v2
-      with:
-        terraform_version: latest  # Specify the Terraform version you need
+      - name: Setup Terragrunt
+        run: |
+          mkdir bin
+          wget -O bin/terragrunt https://github.com/gruntwork-io/terragrunt/releases/download/latest/terragrunt_linux_amd64
+          chmod +x bin/terragrunt
+          echo "$GITHUB_WORKSPACE/bin" >> $GITHUB_PATH
 
-    - name: Authenticate to AWS
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ca-central-1  # or your region
-
-    - name: Initialize Terragrunt
-      run: terragrunt run-all init --terragrunt-non-interactive
-      working-directory: workdir/terragrunt-ecs
-
-    - name: Validate Terragrunt
-      run: terragrunt run-all validate --terragrunt-non-interactive
-      working-directory: workdir/terragrunt-ecs
-
-    - name: Plan Terragrunt
-      id: plan
-      run: |
-        terragrunt run-all plan --terragrunt-non-interactive
-      working-directory: workdir/terragrunt-ecs
-
-    - name: Apply Terragrunt
-      run: terragrunt run-all apply --terragrunt-non-interactive
-      working-directory: workdir/terragrunt-ecs
+      - name: Apply All production
+        run: |
+          cd env/production
+          terragrunt run-all apply --terragrunt-non-interactive
