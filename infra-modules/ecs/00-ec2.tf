@@ -25,7 +25,7 @@ resource "aws_launch_template" "this" {
 
 resource "aws_autoscaling_group" "this" {
   name_prefix               = "${var.env}-ecs-asg"
-  vpc_zone_identifier       = var.private_subnets_ids
+  vpc_zone_identifier       = var.public_subnets_ids
   min_size                  = 2
   max_size                  = 3
   health_check_grace_period = 0
