@@ -33,6 +33,11 @@ variable "vpc_security_group_ids" {
   description = "vpc security group ids"
 }
 
+variable "vpc_sg" {
+  type        = string
+  description = "vpc security group"
+}
+
 variable "internet_gw_id" {
   type        = string
   description = "internet gw id"

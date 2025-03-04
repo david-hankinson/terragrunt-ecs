@@ -29,6 +29,7 @@ dependency "network" {
     aws_ecs_service_load_balancer_tg_arn = "arn:aws:elasticloadbalancing:ca-central-1:000000000000:targetgroup/prod-tg/0000000000000000"
     internet_gw_id = "aaaaa"
     vpc_security_group_ids = "aaaaaaa"
+    vpc_sg = "dependency.network.outputs.vpc_sg"
   }
 }
 
@@ -39,7 +40,7 @@ inputs = {
 
 
   ## ec2 inputs
-  ec2_instance_type = "t3.small"
+  ec2_instance_type = "t3.large"
   vpc_zone_identifier = flatten([dependency.network.outputs.public_subnets_ids, dependency.network.outputs.private_subnets_ids])
 
   ## ecs inputs
@@ -49,6 +50,7 @@ inputs = {
   ecs_minimum_scaling_step_size = 1
   ecs_maximum_scaling_step_size = 2
   ecs_target_capacity_percentage = 80
+  vpc_sg = dependency.network.outputs.vpc_sg
   vpc_id = dependency.network.outputs.vpc_id
   vpc_security_group_ids = dependency.network.outputs.vpc_sg
   public_subnets_ids = dependency.network.outputs.public_subnets_ids

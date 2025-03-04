@@ -17,7 +17,7 @@
 #   }
 #
 #   tags = {
-#     Name = "${var.env}-react-tg"
+#     Name = "${var.env}-react-tg"non-prod-ecs-state
 #   }
 # }
 #
