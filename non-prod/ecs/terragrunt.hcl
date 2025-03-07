@@ -40,8 +40,7 @@ inputs = {
 
 
   ## ec2 inputs
-  ec2_instance_type = "t3.medium"
-  ec2_instance_ami = "ami-05073582a4b03d785"
+  ec2_instance_type = "t3.large"
   vpc_zone_identifier = flatten([dependency.network.outputs.public_subnets_ids, dependency.network.outputs.private_subnets_ids])
 
   ## ecs inputs

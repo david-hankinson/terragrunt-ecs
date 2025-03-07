@@ -1,13 +1,10 @@
-# Add your variable declarations here
-
-variable "ec2_instance_ami" {
-  description = "The AMI ID for the EC2 instances"
-  type        = string
+data "aws_ssm_parameter" "this" {
+  name = "/aws/service/ecs/optimized-ami/amazon-linux-2/recommended/image_id"
 }
 
 resource "aws_launch_template" "this" {
   name_prefix            = "${var.env}-ecs-cluster-node-lt-"
-  image_id               = var.ec2_instance_ami
+  image_id               = data.aws_ssm_parameter.this.value
   instance_type          = var.ec2_instance_type
   vpc_security_group_ids = [aws_security_group.this.id]
 
