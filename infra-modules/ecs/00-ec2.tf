@@ -31,6 +31,7 @@ resource "aws_autoscaling_group" "this" {
   health_check_grace_period = 0
   health_check_type         = "EC2"
   protect_from_scale_in     = false
+  
 
   launch_template {
     id      = aws_launch_template.this.id
@@ -50,7 +51,10 @@ resource "aws_autoscaling_group" "this" {
   }
 }
 
-
-
-
+## Need an ec2 instance connection endpoint for ssm to private subnet ec2's
+## Written slightly different to a 'count' for loop
+resource "aws_ec2_instance_connect_endpoint" "private_asg" {
+  for_each = var.private_subnets_ids[*]
+  subnet_id = each.value
+}
 

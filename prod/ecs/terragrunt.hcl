@@ -35,11 +35,11 @@ dependency "network" {
 
 inputs = {
   ## env inputs
-  env                      = include.env.locals.env
+  env                      = "prod"
   region                   = include.env.locals.region
 
   ## ec2 inputs
-  ec2_instance_type = "t3.large"
+  ec2_instance_type = "t3.medium"
   vpc_zone_identifier = flatten([dependency.network.outputs.public_subnets_ids, dependency.network.outputs.private_subnets_ids])
 
   ## ecs inputs
