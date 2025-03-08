@@ -54,7 +54,7 @@ resource "aws_autoscaling_group" "this" {
 ## Need an ec2 instance connection endpoint for ssm to private subnet ec2's
 ## Written slightly different to a 'count' for loop
 resource "aws_ec2_instance_connect_endpoint" "private_asg" {
-  for_each = var.private_subnets_ids[*]
+  for_each = toset(var.private_subnets_ids)
   subnet_id = each.value
 }
 
