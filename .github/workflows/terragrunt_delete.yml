@@ -1,59 +1,59 @@
-name: "terragrunt-destroy"
+# name: "terragrunt-destroy"
 
-on:
-  push:
-    branches:
-      - main
-jobs:
-  terragrunt-destroy-all:
-    runs-on: ubuntu-latest
-    env:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      AWS_REGION: ca-central-1
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
+# on:
+#   push:
+#     branches:
+#       - main
+# jobs:
+#   terragrunt-destroy-all:
+#     runs-on: ubuntu-latest
+#     env:
+#       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#       AWS_REGION: ca-central-1
+#     steps:
+#       - name: Checkout
+#         uses: actions/checkout@v2
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v1.2.1
-        with:
-          terraform_version: latest
-          terraform_wrapper: false
+#       - name: Setup Terraform
+#         uses: hashicorp/setup-terraform@v1.2.1
+#         with:
+#           terraform_version: latest
+#           terraform_wrapper: false
 
-      - name: Setup Terragrunt
-        run: |
-          #!/usr/bin/env bash
-          set -euo pipefail
+#       - name: Setup Terragrunt
+#         run: |
+#           #!/usr/bin/env bash
+#           set -euo pipefail
       
-          OS="linux"
-          ARCH="amd64"
-          VERSION="v0.69.10"
-          BINARY_NAME="terragrunt_${OS}_${ARCH}"
+#           OS="linux"
+#           ARCH="amd64"
+#           VERSION="v0.69.10"
+#           BINARY_NAME="terragrunt_${OS}_${ARCH}"
       
-          # Download the binary
-          curl -sL "https://github.com/gruntwork-io/terragrunt/releases/download/$VERSION/$BINARY_NAME" -o "$BINARY_NAME"
+#           # Download the binary
+#           curl -sL "https://github.com/gruntwork-io/terragrunt/releases/download/$VERSION/$BINARY_NAME" -o "$BINARY_NAME"
       
-          # Generate the checksum
-          CHECKSUM="$(sha256sum "$BINARY_NAME" | awk '{print $1}')"
+#           # Generate the checksum
+#           CHECKSUM="$(sha256sum "$BINARY_NAME" | awk '{print $1}')"
       
-          # Download the checksum file
-          curl -sL "https://github.com/gruntwork-io/terragrunt/releases/download/$VERSION/SHA256SUMS" -o SHA256SUMS
+#           # Download the checksum file
+#           curl -sL "https://github.com/gruntwork-io/terragrunt/releases/download/$VERSION/SHA256SUMS" -o SHA256SUMS
       
-          # Grab the expected checksum
-          EXPECTED_CHECKSUM="$(grep "$BINARY_NAME" SHA256SUMS | awk '{print $1}')"
+#           # Grab the expected checksum
+#           EXPECTED_CHECKSUM="$(grep "$BINARY_NAME" SHA256SUMS | awk '{print $1}')"
       
-          # Compare the checksums
-          if [ "$CHECKSUM" == "$EXPECTED_CHECKSUM" ]; then
-            echo "Checksums match!"
-            chmod +x "$BINARY_NAME"
-            sudo mv "$BINARY_NAME" /usr/local/bin/terragrunt
-          else
-            echo "Checksums do not match!"
-            exit 1
-          fi
+#           # Compare the checksums
+#           if [ "$CHECKSUM" == "$EXPECTED_CHECKSUM" ]; then
+#             echo "Checksums match!"
+#             chmod +x "$BINARY_NAME"
+#             sudo mv "$BINARY_NAME" /usr/local/bin/terragrunt
+#           else
+#             echo "Checksums do not match!"
+#             exit 1
+#           fi
 
 
-      - name: Apply All
-        run: |
-          terragrunt run-all destroy --terragrunt-non-interactive
+#       - name: Apply All
+#         run: |
+#           terragrunt run-all destroy --terragrunt-non-interactive
