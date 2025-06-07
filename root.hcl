@@ -59,14 +59,13 @@ generate "provider" {
   if_exists = "overwrite_terragrunt"
 
   contents = <<EOF
-provider "aws" {
-  region  = "ca-central-1"
-  profile = "anton"
-  
-  # assume_role {
-  #   session_name = "leson-160"
-  #   role_arn = "arn:aws:iam::424432388155:role/terraform"
-  # }
+terraform {
+  required_providers {
+      aws = {
+        source  = "hashicorp/aws"
+        version = "> 4.0"
+      }
+    }
 }
 EOF
 }
