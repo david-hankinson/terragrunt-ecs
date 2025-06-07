@@ -33,17 +33,17 @@ inputs = {
   app_ingress_ports        = [80, 443]                 # Allow HTTP to application servers
 }
 
-remote_state {
-  backend = "s3"
-  generate = {
-    path      = "prod-network-state.tf"
-    if_exists = "overwrite_terragrunt"
-  }
+# remote_state {
+#   backend = "s3"
+#   generate = {
+#     path      = "prod-network-state.tf"
+#     if_exists = "overwrite_terragrunt"
+#   }
 
-  config = {
-    bucket  = "prod-network-state"
-    key     = "network.prod.terraform.tfstate"
-    region  = "ca-central-1"
-    encrypt = true
-  }
-}
+#   config = {
+#     bucket  = "prod-network-state"
+#     key     = "network.prod.terraform.tfstate"
+#     region  = "ca-central-1"
+#     encrypt = true
+#   }
+# }

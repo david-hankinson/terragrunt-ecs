@@ -59,17 +59,17 @@ inputs = {
   internet_gw_id = dependency.network.outputs.internet_gw_id
 }
 
-remote_state {
-  backend = "s3"
-  generate = {
-    path      = "non-prod-state.tf"
-    if_exists = "overwrite_terragrunt"
-  }
+# remote_state {
+#   backend = "s3"
+#   generate = {
+#     path      = "non-prod-state.tf"
+#     if_exists = "overwrite_terragrunt"
+#   }
 
-  config = {
-    bucket  = "non-prod-ecs-state"
-    key     = "ecs.non-prod.terraform.tfstate"
-    region  = "ca-central-1"
-    encrypt = true
-  }
-}
+#   config = {
+#     bucket  = "non-prod-ecs-state"
+#     key     = "ecs.non-prod.terraform.tfstate"
+#     region  = "ca-central-1"
+#     encrypt = true
+#   }
+# }
