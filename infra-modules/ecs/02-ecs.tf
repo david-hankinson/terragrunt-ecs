@@ -1,6 +1,10 @@
 # Create an ECS cluster
 resource "aws_ecs_cluster" "this" {
   name = "${var.env}-ecs-cluster"
+  setting {
+    name  = "containerInsights"
+    value = "enabled"
+  }
 }
 
 resource "aws_ecs_capacity_provider" "this" {
