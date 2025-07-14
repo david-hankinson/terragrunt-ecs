@@ -3,7 +3,7 @@ terraform {
 }
 
 include "root" {
-  path = find_in_parent_folders("root.hcl")
+  path = find_in_parent_folders()
 }
 
 include "env" {
@@ -13,7 +13,7 @@ include "env" {
 }
 
 dependency "network" {
-  config_path = "../network/"
+  config_path = "../infra-modues/network/"
 
   mock_outputs = {
     public_subnets_ids = ["id_one", "id_two"]
@@ -33,10 +33,9 @@ dependency "network" {
   }
 }
 
-inputs = {
+inputs { 
   ## env inputs
   env                      = "prod"
-  region                   = include.env.locals.region
 
   ## ec2 inputs
   ec2_instance_type = "t3.medium"
@@ -58,17 +57,18 @@ inputs = {
   internet_gw_id = dependency.network.outputs.internet_gw_id
 }
 
-remote_state {
-  backend = "s3"
-  generate = {
-    path      = "prod-ecs-state.tf"
-    if_exists = "overwrite_terragrunt"
-  }
+# remote_state {
+#   backend = "s3"
+#   generate = {
+#     path      = "prod-ecs-state.tf"
+#     if_exists = "overwrite_terragrunt"
+#   }
 
-  config = {
-    bucket  = "prod-ecs-state"
-    key     = "ecs.prod.terraform.tfstate"
-    region  = "ca-central-1"
-    encrypt = true
-  }
-}
+#   config = {
+#     ## bucket should be from root.hcl and object should {env}.state
+#     bucket  = "prod-ecs-state"
+#     key     = "ecs.prod.terraform.tfstate"
+#     region  = "ca-central-1"
+#     encrypt = true
+#   }
+#}

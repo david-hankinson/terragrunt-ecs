@@ -3,7 +3,7 @@ terraform {
 }
 
 include "root" {
-  path = find_in_parent_folders("root.hcl")
+  path = find_in_parent_folders()
 }
 
 include "env" {
@@ -35,9 +35,7 @@ dependency "network" {
 
 inputs = {
   ## env inputs
-  env                      = "non-prod"
-  region                   = include.env.locals.region
-
+  env                      = local.env
 
   ## ec2 inputs
   ec2_instance_type = "t3.medium"

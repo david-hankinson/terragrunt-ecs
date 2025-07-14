@@ -3,7 +3,7 @@ terraform {
 }
 
 include "root" {
-  path = find_in_parent_folders("root.hcl")
+  path = find_in_parent_folders()
 }
 
 include "env" {
@@ -14,8 +14,8 @@ include "env" {
 
 inputs = {
   # Environment
-  env                      = "non-prod"
-  region                   = include.env.locals.region
+  env                      = local.env
+  #dependency.env.locals.regionregion                   = # include.env.locals.region
   availability_zones       = ["ca-central-1a", "ca-central-1b", "ca-central-1d"]
 
   # VPC Configuration

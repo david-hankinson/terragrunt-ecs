@@ -1,6 +1,6 @@
-terraform {
-  source = "./"
-}
+# terraform {
+#   source = "./"
+# }
 
 # generate "provider" {
 #   path = "provider.tf"
