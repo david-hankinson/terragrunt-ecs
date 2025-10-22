@@ -1,0 +1,28 @@
+VERSION 1
+
+quick explination and docs to the top of each page
+
+seperate out the modules into git repos
+Practice how to do local development
+
+use an iam role and multi account
+dns ssl tls certs etc.
+
+some testing in go 
+
+make the docker container deployed automotive related
+
+testing with go 
+
+pen testing with go too
+
+ci/cicd
+
+
+
+
+
+
+
+
+

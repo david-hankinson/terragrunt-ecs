@@ -1,19 +1,20 @@
-terraform {
-  source = "../../infra-modules/ecs/"
-}
-
 include "root" {
-  path = find_in_parent_folders()
+  path = find_in_parent_folders("root.hcl")
 }
 
 include "env" {
-  path           = find_in_parent_folders("env.hcl")
+  path           = "${get_terragrunt_dir()}/../../_env/ecs.hcl"
   expose         = true
   merge_strategy = "no_merge"
 }
 
+terraform {
+  source = "git::https://github.com/david-hankinson/terragrunt-module-ecs.git//ecs?ref=main"
+}
+
 dependency "network" {
-  config_path = "../infra-modues/network/"
+  config_path = "../network/"
+
 
   mock_outputs = {
     public_subnets_ids = ["id_one", "id_two"]
@@ -56,19 +57,3 @@ inputs {
   vpc_cidr_block = dependency.network.outputs.vpc_cidr_block
   internet_gw_id = dependency.network.outputs.internet_gw_id
 }
-
-# remote_state {
-#   backend = "s3"
-#   generate = {
-#     path      = "prod-ecs-state.tf"
-#     if_exists = "overwrite_terragrunt"
-#   }
-
-#   config = {
-#     ## bucket should be from root.hcl and object should {env}.state
-#     bucket  = "prod-ecs-state"
-#     key     = "ecs.prod.terraform.tfstate"
-#     region  = "ca-central-1"
-#     encrypt = true
-#   }
-#}

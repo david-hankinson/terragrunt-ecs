@@ -1,15 +1,15 @@
-terraform {
-  source = "../../infra-modules/ecs/"
-}
-
 include "root" {
-  path = find_in_parent_folders()
+  path = find_in_parent_folders("root.hcl")
 }
 
 include "env" {
-  path           = find_in_parent_folders("env.hcl")
+  path           = "${get_terragrunt_dir()}/../../_env/ecs.hcl"
   expose         = true
   merge_strategy = "no_merge"
+}
+
+terraform {
+  source = "git::https://github.com/david-hankinson/terragrunt-module-ecs.git//ecs?ref=main"
 }
 
 dependency "network" {

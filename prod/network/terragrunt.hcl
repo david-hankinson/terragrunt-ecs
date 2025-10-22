@@ -1,27 +1,21 @@
-terraform {
-  source = "../../infra-modules/network/"
-}
-
 include "root" {
-  path = find_in_parent_folders()
+  path = find_in_parent_folders("root.hcl")
 }
 
 include "env" {
-  path = "${get_terragrunt_dir()}/../../_env/app.hcl"
-  # expose         = true
-  # merge_strategy = "no_merge"
+  path = "${get_terragrunt_dir()}/../../_env/network.hcl"
+}
+
+terraform {
+  source = "git::https://github.com/david-hankinson/terragrunt-module-vpc.git//network?ref=main"
 }
 
 inputs = {
   # Environment
-  env                      = include.env.locals.env
-  #region                   = 
-  availability_zones       = ["ca-central-1a", "ca-central-1b", "ca-central-1d"]
+  env                      = "prod"
 
   # VPC Configuration
   vpc_cidr_block           = "10.0.0.0/16"
-  enable_dns_support       = true
-  enable_dns_hostnames     = true
 
   # Subnet Configuration
   public_subnets           = ["10.0.1.0/24", "10.0.2.0/24"]
@@ -29,21 +23,5 @@ inputs = {
 
   # Security Groups
   allowed_ssh_cidr_blocks  = ["192.168.1.0/24"]         # Restrict SSH
-  alb_ingress_ports        = [80, 443]                 # Allow HTTP/HTTPS traffic
-  app_ingress_ports        = [80, 443]                 # Allow HTTP to application servers
 }
-
-# remote_state {
-#   backend = "s3"
-#   generate = {
-#     path      = "prod-network-state.tf"
-#     if_exists = "overwrite_terragrunt"
-#   }
-
-#   config = {
-#     bucket  = "prod-network-state"
-#     key     = "network.prod.terraform.tfstate"
-#     region  = "ca-central-1"
-#     encrypt = true
-#   }
-# }
+ 

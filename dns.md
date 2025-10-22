@@ -36,7 +36,3 @@ passing test = dns and cert on jupyter notebook
 
 container insights should be enabled in ecs - done
 view container insights
-
-
-
-
