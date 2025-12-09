@@ -4,13 +4,14 @@ locals {
 }
 
 unit "vpc" {
-  source = "git::https://github.com/david-hankinson/terragrunt-module-vpc.git//network?ref=main"
+
+  source = "git::https://github.com/david-hankinson/terragrunt-module-vpc.git//units/network"
   
-  path = "network"
+  path = "units/network"
 
   values = {
   # Environment
-  env                      = local.env
+  # env                      = local.env
 
   # VPC Configuration
   vpc_cidr_block           = "10.1.0.0/16"
@@ -22,8 +23,8 @@ unit "vpc" {
   # Security Groups
   allowed_ssh_cidr_blocks  = ["10.1.0.0/16"] 
   # Restrict SSH
+}
 
-  }
 }
 
 # unit "ecs-deploy" {
