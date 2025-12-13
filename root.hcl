@@ -47,15 +47,6 @@ remote_state {
   }
 }
 
-# # Configure what repositories to search when you run 'terragrunt catalog'
-# catalog {
-#   urls = [
-#     "https://github.com/gruntwork-io/terragrunt-infrastructure-catalog-example",
-#     "https://github.com/gruntwork-io/terraform-aws-utilities",
-#     "https://github.com/gruntwork-io/terraform-kubernetes-namespace"
-#   ]
-# }
-
 # ---------------------------------------------------------------------------------------------------------------------
 # GLOBAL PARAMETERS
 # These variables apply to all configurations in this subfolder. These are automatically merged into the child

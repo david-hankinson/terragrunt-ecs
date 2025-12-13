@@ -5,9 +5,9 @@ locals {
 
 unit "vpc" {
 
-  source = "git::https://github.com/david-hankinson/terragrunt-module-vpc.git//units/network"
+  source = "git::git@github.com:david-hankinson/terragrunt-module-vpc.git//units/network?ref=main"
   
-  path = "units/network"
+  path = "."
 
   values = {
   # Environment
@@ -27,20 +27,53 @@ unit "vpc" {
 
 }
 
+# unit "service" {
+#   // You'll typically want to pin this to a particular version of your catalog repo.
+#   // e.g.
+#   // source = "git::git@github.com:gruntwork-io/terragrunt-infrastructure-catalog-example.git//units/ec2-asg-stateful-service?ref=v0.1.0"
+#   source = "git::git@github.com:gruntwork-io/terragrunt-infrastructure-catalog-example.git//units/ec2-asg-stateful-service"
+
+#   path = "service"
+
+#   values = {
+#     // This version here is used as the version passed down to the unit
+#     // to use when fetching the OpenTofu/Terraform module.
+#     version = "main"
+
+#     name          = local.name
+#     instance_type = "t4g.micro"
+#     min_size      = 2
+#     max_size      = 4
+#     server_port   = 3000
+#     alb_port      = 80
+
+#     db_path     = "../db"
+#     asg_sg_path = "../sgs/asg"
+
+#     // This is used for the userdata script that
+#     // bootstraps the EC2 instances.
+#     db_username = local.db_username
+#     db_password = local.db_password
+#   }
+# }
+
 # unit "ecs-deploy" {
 #   source = "ecs-deploy"
-#   path = "git::https://github.com/david-hankinson/terragrunt-module-ecs.git//ecs?ref="
+#   path = "git::https://github.com/david-hankinson/terragrunt-module-ecs.git//ecs"
 
 #   values = {
 #       ## env inputs
 #   env                      = local.env
+
+#   #// This path is used for relative references
+#   #// to the db unit as a dependency.
+#   #asg_sg_path = "../sgs/asg"
 
 #   ## ec2 inputs
 #   # ec2_instance_type = "t3.medium"
 #   # // vpc_zone_identifier is now typically passed via dependency injection from the stack wiring.
 #   # // In the latest Terragrunt deployment patterns, you can reference outputs from other units directly.
 #   # // For example, if your unit is named "network", use:
-#   vpc_zone_identifier = network.outputs.public_subnets_ids
 
 #   network_path = "../network"
 
@@ -51,14 +84,7 @@ unit "vpc" {
 #   ecs_minimum_scaling_step_size = 1
 #   ecs_maximum_scaling_step_size = 2
 #   ecs_target_capacity_percentage = 80
-#   vpc_sg = network.outputs.vpc_sg
-#   vpc_id = network.outputs.vpc_id
-#   vpc_security_group_ids = vpc_sg
-#   public_subnets_ids = network.outputs.public_subnets_ids
-#   private_subnets_ids = network.outputs.private_subnets_ids
-#   vpc_cidr_block = network.outputs.vpc_cidr_block
-#   internet_gw_id = network.outputs.internet_gw_id
-#   }
+# }
 
 # }
 # 
